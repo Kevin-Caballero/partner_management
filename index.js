@@ -1,3 +1,4 @@
+//!CLASSES______________________________________________________________________________________________________________
 class Person {
     constructor(dni, name, surname, birthDate, locality) {
         this._dni = dni;
@@ -33,18 +34,11 @@ class Partner extends Person{
     set partnerNumber(value) { this._partnerNumber = value; }
 }
 
-const p1 = new Partner(1,'11111111G','nombre1', 'apellido1', '10/07/1994','Donostia');
-const p2 = new Partner(2,'22222222G','nombre2', 'apellido2', '10/07/1994','Errenteria');
-const p3 = new Partner(3,'33333333G','nombre3', 'apellido3', '10/07/1994','Bilbo');
-const p4 = new Partner(4,'44444444G','nombre4', 'apellido4', '10/07/1994','Orio');
-const p5 = new Partner(5,'55555555G','nombre5', 'apellido5', '10/07/1994','Aia');
-
-let partners= [p1,p2,p3,p4,p5]
-
-console.log(partners);
-
-for(let partner of partners){
-    document.getElementById('content').innerHTML += `
+//!FUNCTIONS____________________________________________________________________________________________________________
+function loadList(){
+    document.getElementById('content').innerHTML = '';
+    for(let partner of partners){
+        document.getElementById('content').innerHTML += `
             <tr>
                 <td>${partner.partnerNumber}</td>
                 <td>${partner.dni}</td>
@@ -57,9 +51,10 @@ for(let partner of partners){
                     <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>`
+    }
 }
 
-function showAddForm(){
+function changeAddFormVisibility(){
     let addFormStyle = document.getElementById("addForm").style;
     if(addFormStyle.visibility.toLowerCase() == 'hidden'){
         addFormStyle.visibility='visible';
@@ -67,3 +62,62 @@ function showAddForm(){
         addFormStyle.visibility='hidden';
     }
 }
+
+function getNextId() {
+    let partnerNumber = document.getElementById('partNum').value;
+    let partnerNumberAsInteger = parseInt(document.getElementById('partNum').value);
+
+    if(typeof(partnerNumberAsInteger) == "number"){
+        if(exists(partnerNumberAsInteger) || partnerNumber == ''){
+            return getMaxId();
+        }else{
+            return partnerNumber;
+        }
+    }
+}
+
+function exists(partnerNumber) {
+    for(let partner of partners){
+        if(partner.partnerNumber == partnerNumber){
+            return true;
+        }
+    }
+    return false;
+}
+
+function getMaxId(){
+    let max = 0;
+    partners.forEach(p => {
+        if (p.partnerNumber > max) {
+            max = p.partnerNumber;
+        }
+    });
+    return parseInt(max)+1;
+}
+
+function addPartner(){
+    let partnerNumber = getNextId();
+    let dni = document.getElementById('dni').value;
+    let name = document.getElementById('name').value;
+    let surname = document.getElementById('surname').value;
+    let birthDate = document.getElementById('date').value;
+    let locality = document.getElementById('loc').value;
+
+    let addedPartner = new Partner(partnerNumber,dni,name,surname,birthDate,locality);
+    console.log(addedPartner);
+    partners.push(addedPartner);
+    loadList();
+    document.getElementById('addPartnerForm').reset();
+}
+
+//!SCRIPT_______________________________________________________________________________________________________________
+const p1 = new Partner(1,'11111111G','nombre1', 'apellido1', '11/07/1994','Donostia');
+const p2 = new Partner(2,'22222222G','nombre2', 'apellido2', '12/07/1994','Errenteria');
+const p3 = new Partner(3,'33333333G','nombre3', 'apellido3', '13/07/1994','Bilbo');
+const p4 = new Partner(4,'44444444G','nombre4', 'apellido4', '14/07/1994','Orio');
+const p5 = new Partner(5,'55555555G','nombre5', 'apellido5', '15/07/1994','Aia');
+
+let partners= [p1,p2,p3,p4,p5]
+console.log(partners);
+
+window.onload=loadList();
