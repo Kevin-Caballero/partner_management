@@ -47,8 +47,8 @@ function loadList(){
                 <td>${partner.birthDate}</td>
                 <td>${partner.locality}</td>
                 <td class="d-flex justify-content-center">
-                    <button class="btn btn-warning mr-2"><i class="fa fa-edit text-white"></i></button>
-                    <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                    <button class="btn btn-warning mr-2" ><i class="fa fa-edit text-white"></i></button>
+                    <button class="btn btn-danger" onclick="deletePartner(this.parentNode)"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>`
     }
@@ -95,20 +95,48 @@ function getMaxId(){
     return parseInt(max)+1;
 }
 
+function convertDateFormat(string) {
+    let date = string.split('-').reverse().join('/');
+    return date;
+}
+
 function addPartner(){
     let partnerNumber = getNextId();
     let dni = document.getElementById('dni').value;
     let name = document.getElementById('name').value;
     let surname = document.getElementById('surname').value;
-    let birthDate = document.getElementById('date').value;
+    let birthDate = convertDateFormat(document.getElementById('date').value);
     let locality = document.getElementById('loc').value;
 
-    let addedPartner = new Partner(partnerNumber,dni,name,surname,birthDate,locality);
-    console.log(addedPartner);
-    partners.push(addedPartner);
-    loadList();
-    document.getElementById('addPartnerForm').reset();
+    if(name == '' || surname == ''){
+        document.getElementById('name').style.borderColor = 'red';
+        document.getElementById('nameErrorMsg').style.visibility = 'visible';
+        document.getElementById('surname').style.borderColor = 'red';
+        document.getElementById('surnameErrorMsg').style.visibility = 'visible';
+    }else{
+        let addedPartner = new Partner(partnerNumber,dni,name,surname,birthDate,locality);
+        console.log(addedPartner);
+        partners.push(addedPartner);
+        loadList();
+        document.getElementById('name').style.borderColor = '';
+        document.getElementById('nameErrorMsg').style.visibility = 'hidden';
+        document.getElementById('surname').style.borderColor = '';
+        document.getElementById('surnameErrorMsg').style.visibility = 'hidden';
+        document.getElementById('addPartnerForm').reset();
+    }
 }
+
+function deletePartner(parent){
+    let row = parent.parentNode;
+    let partnerNumber = row.firstChild.nextSibling.textContent;
+    for (let partner of partners){
+        if(partner.partnerNumber == partnerNumber){
+            partners.pop(partner);
+        }
+    }
+    loadList();
+}
+
 
 //!SCRIPT_______________________________________________________________________________________________________________
 const p1 = new Partner(1,'11111111G','nombre1', 'apellido1', '11/07/1994','Donostia');
@@ -117,7 +145,7 @@ const p3 = new Partner(3,'33333333G','nombre3', 'apellido3', '13/07/1994','Bilbo
 const p4 = new Partner(4,'44444444G','nombre4', 'apellido4', '14/07/1994','Orio');
 const p5 = new Partner(5,'55555555G','nombre5', 'apellido5', '15/07/1994','Aia');
 
-let partners= [p1,p2,p3,p4,p5]
+var partners= [p1,p2,p3,p4,p5]
 console.log(partners);
 
 window.onload=loadList();
